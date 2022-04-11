@@ -79,11 +79,11 @@ namespace dotnet_api_test.Controllers
             }
 
             Dish foundDish = _dishRepository.GetDishById(id);
-            foundDish.Name = updateDishDto.Name;
-            foundDish.MadeBy = updateDishDto.MadeBy;
-            foundDish.Cost = (double) updateDishDto.Cost;
+            foundDish.Name = dish.Name;
+            foundDish.MadeBy = dish.MadeBy;
+            foundDish.Cost = dish.Cost;
 
-            _dishRepository.UpdateDish(dish);
+            _dishRepository.UpdateDish(foundDish);
 
             ReadDishDto dishDto = _mapper.Map<ReadDishDto>(foundDish);
             return Ok(dishDto);
