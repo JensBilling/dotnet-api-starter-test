@@ -42,9 +42,15 @@ namespace dotnet_api_test.Persistence.Repositories
             return dish;
         }
 
-        public void DeleteDishById(int Id)
+        public void DeleteDishById(int id)
         {
-            _context.Dishes.Remove(_context.Dishes.Find(Id));
+            if (_context.Dishes.Find(id) == null)
+            {
+                throw new NotFoundRequestExceptionResponse("No dish found with id: " + id, 404);
+
+            }
+
+            _context.Dishes.Remove(_context.Dishes.Find(id));
             _context.SaveChanges();
         }
 

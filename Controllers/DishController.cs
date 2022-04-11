@@ -76,12 +76,6 @@ namespace dotnet_api_test.Controllers
         [Route("{id}")]
         public ActionResult DeleteDishById(int id)
         {
-            Dish dish = _dishRepository.GetDishById(id);
-            if (dish == null)
-            {
-                throw new NotFoundRequestExceptionResponse("No dish found with id: " + id, 404);
-            }
-
             _dishRepository.DeleteDishById(id);
             return Ok("Deleted dish with id: " + id);
         }
