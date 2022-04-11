@@ -2,6 +2,7 @@ using AutoMapper;
 using dotnet_api_test.Exceptions.ExceptionResponses;
 using dotnet_api_test.Models.Dtos;
 using dotnet_api_test.Persistence.Repositories.Interfaces;
+using dotnet_api_test.Validation;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 
@@ -59,11 +60,8 @@ namespace dotnet_api_test.Controllers
         public ActionResult<ReadDishDto> CreateDish([FromBody] CreateDishDto createDishDto)
         {
             Dish dish = _mapper.Map<Dish>(createDishDto);
-            if (dish.Name == null || dish.MadeBy == null || dish.Cost == 0)
-            {
-                throw new BadRequestExceptionResponse("Your update must contain all fields (name, madeBy, cost)", 400);
-            }
-
+            
+            ModelValidation.ValidateCreateDishDto(createDishDto);
             ReadDishDto dishDto = _mapper.Map<ReadDishDto>(_dishRepository.CreateDish(dish));
             return Ok(dishDto);
         }
@@ -72,16 +70,12 @@ namespace dotnet_api_test.Controllers
         [Route("{id}")]
         public ActionResult<ReadDishDto> UpdateDishById(int id, UpdateDishDto updateDishDto)
         {
-            Dish dish = _mapper.Map<Dish>(updateDishDto);
-            if (dish.Name == null || dish.MadeBy == null || dish.Cost == 0)
-            {
-                throw new BadRequestExceptionResponse("Your update must contain all fields (name, madeBy, cost)", 400);
-            }
+            ModelValidation.ValidateUpdateDishDto(updateDishDto);
 
             Dish foundDish = _dishRepository.GetDishById(id);
-            foundDish.Name = dish.Name;
-            foundDish.MadeBy = dish.MadeBy;
-            foundDish.Cost = dish.Cost;
+            foundDish.Name = updateDishDto.Name;
+            foundDish.MadeBy = updateDishDto.MadeBy;
+            foundDish.Cost = (double) updateDishDto.Cost;
 
             _dishRepository.UpdateDish(foundDish);
 
