@@ -1,5 +1,4 @@
 using AutoMapper;
-using dotnet_api_test.Exceptions.ExceptionResponses;
 using dotnet_api_test.Models.Dtos;
 using dotnet_api_test.Persistence.Repositories.Interfaces;
 using dotnet_api_test.Validation;

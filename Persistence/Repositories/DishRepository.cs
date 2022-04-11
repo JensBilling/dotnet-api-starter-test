@@ -23,6 +23,7 @@ namespace dotnet_api_test.Persistence.Repositories
             {
                 throw new NotFoundRequestExceptionResponse("No dishes found in database", 404);
             }
+
             return _context.Dishes;
         }
 
@@ -38,7 +39,7 @@ namespace dotnet_api_test.Persistence.Repositories
             {
                 throw new NotFoundRequestExceptionResponse("No dish found with id: " + id, 404);
             }
-            
+
             return dish;
         }
 
@@ -47,7 +48,6 @@ namespace dotnet_api_test.Persistence.Repositories
             if (_context.Dishes.Find(id) == null)
             {
                 throw new NotFoundRequestExceptionResponse("No dish found with id: " + id, 404);
-
             }
 
             _context.Dishes.Remove(_context.Dishes.Find(id));
