@@ -1,10 +1,8 @@
 using AutoMapper;
-using dotnet_api_test.Exceptions.ExceptionResponses;
 using dotnet_api_test.Models.Dtos;
 using dotnet_api_test.Persistence.Repositories.Interfaces;
 using dotnet_api_test.Validation;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.Logging;
 
 namespace dotnet_api_test.Controllers
 {
@@ -54,7 +52,7 @@ namespace dotnet_api_test.Controllers
             Dish dish = _mapper.Map<Dish>(createDishDto);
 
             ModelValidation.ValidateCreateDishDto(createDishDto);
-            ValidateNoConflictInDatabase.ValidateCreateUniqueDishName(createDishDto.Name, _dishRepository.GetAllDishes());
+            ValidateNoConflictInDatabase.ValidateCreateUniqueDishName(createDishDto.Name!, _dishRepository.GetAllDishes());
             ReadDishDto dishDto = _mapper.Map<ReadDishDto>(_dishRepository.CreateDish(dish));
 
             _logger.LogInformation("New dish created and saved to database");
@@ -68,11 +66,11 @@ namespace dotnet_api_test.Controllers
             ModelValidation.ValidateUpdateDishDto(updateDishDto);
 
             Dish foundDish = _dishRepository.GetDishById(id);
-            ValidateNoConflictInDatabase.ValidatePriceRaiseIsNotMoreThanTwentyPercent(foundDish.Cost, (double)updateDishDto.Cost);
-            ValidateNoConflictInDatabase.ValidateUpdateUniqueDishName(id, updateDishDto.Name, _dishRepository.GetAllDishes());
+            ValidateNoConflictInDatabase.ValidatePriceRaiseIsNotMoreThanTwentyPercent(foundDish.Cost, (double) updateDishDto.Cost!);
+            ValidateNoConflictInDatabase.ValidateUpdateUniqueDishName(id, updateDishDto.Name!, _dishRepository.GetAllDishes());
 
-            foundDish.Name = updateDishDto.Name;
-            foundDish.MadeBy = updateDishDto.MadeBy;
+            foundDish.Name = updateDishDto.Name!;
+            foundDish.MadeBy = updateDishDto.MadeBy!;
             foundDish.Cost = (double) updateDishDto.Cost;
 
             _dishRepository.UpdateDish(foundDish);

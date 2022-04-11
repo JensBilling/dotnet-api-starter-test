@@ -34,7 +34,7 @@ namespace dotnet_api_test.Persistence.Repositories
 
         public Dish GetDishById(int id)
         {
-            Dish dish = _context.Dishes.Find(id);
+            Dish dish = _context.Dishes.Find(id)!;
             if (dish == null)
             {
                 throw new NotFoundRequestExceptionResponse("No dish found with id: " + id, 404);
@@ -49,8 +49,8 @@ namespace dotnet_api_test.Persistence.Repositories
             {
                 throw new NotFoundRequestExceptionResponse("No dish found with id: " + id, 404);
             }
-
-            _context.Dishes.Remove(_context.Dishes.Find(id));
+            
+            _context.Dishes.Remove(_context.Dishes.Find(id)!);
             _context.SaveChanges();
         }
 
