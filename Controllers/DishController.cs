@@ -45,7 +45,8 @@ namespace dotnet_api_test.Controllers
         [Route("")]
         public ActionResult<ReadDishDto> CreateDish([FromBody] CreateDishDto createDishDto)
         {
-            return Ok();
+            Dish dish = _dishRepository.CreateDish(_mapper.Map<Dish>(createDishDto));
+            return Ok(dish);
         }
 
         [HttpPut]

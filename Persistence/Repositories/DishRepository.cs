@@ -40,7 +40,9 @@ namespace dotnet_api_test.Persistence.Repositories
 
         public Dish CreateDish(Dish dish)
         {
-            throw new System.NotImplementedException();
+            _context.Dishes.Add(dish);
+            _context.SaveChanges();
+            return dish;
         }
 
         public Dish UpdateDish(Dish dish)
