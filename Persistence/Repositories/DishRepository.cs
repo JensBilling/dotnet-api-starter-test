@@ -1,4 +1,4 @@
-using System.Collections.Generic;
+using dotnet_api_test.Exceptions.ExceptionResponses;
 using dotnet_api_test.Persistence.Repositories.Interfaces;
 
 namespace dotnet_api_test.Persistence.Repositories
@@ -27,9 +27,14 @@ namespace dotnet_api_test.Persistence.Repositories
             return _context.Dishes.Average(dish => dish.Cost);
         }
 
-        public Dish GetDishById(int Id)
+        public Dish GetDishById(int id)
         {
-            Dish dish = _context.Dishes.Find(Id);
+            Dish dish = _context.Dishes.Find(id);
+            if (dish == null)
+            {
+                throw new NotFoundRequestExceptionResponse("No dish found with id: " + id, 404);
+            }
+            
             return dish;
         }
 

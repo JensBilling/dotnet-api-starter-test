@@ -46,12 +46,6 @@ namespace dotnet_api_test.Controllers
         public ActionResult<ReadDishDto> GetDishById(int id)
         {
             ReadDishDto dish = _mapper.Map<ReadDishDto>(_dishRepository.GetDishById(id));
-
-            if (dish == null)
-            {
-                throw new NotFoundRequestExceptionResponse("No dish found with id: " + id, 404);
-            }
-
             return Ok(dish);
         }
 
@@ -60,7 +54,7 @@ namespace dotnet_api_test.Controllers
         public ActionResult<ReadDishDto> CreateDish([FromBody] CreateDishDto createDishDto)
         {
             Dish dish = _mapper.Map<Dish>(createDishDto);
-            
+
             ModelValidation.ValidateCreateDishDto(createDishDto);
             ReadDishDto dishDto = _mapper.Map<ReadDishDto>(_dishRepository.CreateDish(dish));
             return Ok(dishDto);
