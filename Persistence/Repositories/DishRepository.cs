@@ -29,7 +29,8 @@ namespace dotnet_api_test.Persistence.Repositories
 
         public Dish GetDishById(int Id)
         {
-            throw new System.NotImplementedException();
+            Dish dish = _context.Dishes.Find(Id);
+            return dish;
         }
 
         public void DeleteDishById(int Id)

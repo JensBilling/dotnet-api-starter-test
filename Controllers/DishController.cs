@@ -37,7 +37,8 @@ namespace dotnet_api_test.Controllers
         [Route("{id}")]
         public ActionResult<ReadDishDto> GetDishById(int id)
         {
-            return Ok();
+            Dish dish = _dishRepository.GetDishById(id);
+            return Ok(dish);
         }
 
         [HttpPost]
