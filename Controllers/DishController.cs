@@ -37,7 +37,7 @@ namespace dotnet_api_test.Controllers
         [Route("{id}")]
         public ActionResult<ReadDishDto> GetDishById(int id)
         {
-            Dish dish = _dishRepository.GetDishById(id);
+            ReadDishDto dish = _mapper.Map<ReadDishDto>(_dishRepository.GetDishById(id));
             return Ok(dish);
         }
 
@@ -45,7 +45,7 @@ namespace dotnet_api_test.Controllers
         [Route("")]
         public ActionResult<ReadDishDto> CreateDish([FromBody] CreateDishDto createDishDto)
         {
-            Dish dish = _dishRepository.CreateDish(_mapper.Map<Dish>(createDishDto));
+            ReadDishDto dish = _mapper.Map<ReadDishDto>(_dishRepository.CreateDish(_mapper.Map<Dish>(createDishDto)));
             return Ok(dish);
         }
 
@@ -57,10 +57,11 @@ namespace dotnet_api_test.Controllers
             dish.Name = updateDishDto.Name;
             dish.MadeBy = updateDishDto.MadeBy;
             dish.Cost = (double) updateDishDto.Cost;
-
+            
             _dishRepository.UpdateDish(dish);
             
-            return Ok(dish);
+            ReadDishDto dishDto = _mapper.Map<ReadDishDto>(dish);
+            return Ok(dishDto);
         }
 
         [HttpDelete]
