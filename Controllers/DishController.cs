@@ -67,7 +67,8 @@ namespace dotnet_api_test.Controllers
         [Route("{id}")]
         public ActionResult DeleteDishById(int id)
         {
-            return Ok();
+            _dishRepository.DeleteDishById(id);
+            return Ok("Deleted dish with id: " + id);
         }
     }
 }
