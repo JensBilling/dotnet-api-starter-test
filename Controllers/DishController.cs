@@ -53,7 +53,14 @@ namespace dotnet_api_test.Controllers
         [Route("{id}")]
         public ActionResult<ReadDishDto> UpdateDishById(int id, UpdateDishDto updateDishDto)
         {
-            return Ok();
+            Dish dish = _dishRepository.GetDishById(id);
+            dish.Name = updateDishDto.Name;
+            dish.MadeBy = updateDishDto.MadeBy;
+            dish.Cost = (double) updateDishDto.Cost;
+
+            _dishRepository.UpdateDish(dish);
+            
+            return Ok(dish);
         }
 
         [HttpDelete]
