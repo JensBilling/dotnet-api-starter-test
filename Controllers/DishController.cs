@@ -25,7 +25,12 @@ namespace dotnet_api_test.Controllers
         [Route("")]
         public ActionResult<DishesAndAveragePriceDto> GetDishesAndAverageDishPrice()
         {
-            return Ok();
+            DishesAndAveragePriceDto dishesAndAveragePriceDto = new DishesAndAveragePriceDto
+            {
+                Dishes = _mapper.Map<IEnumerable<ReadDishDto>>(_dishRepository.GetAllDishes()),
+                AveragePrice = _dishRepository.GetAverageDishPrice()
+            };
+            return Ok(dishesAndAveragePriceDto);
         }
 
         [HttpGet]
