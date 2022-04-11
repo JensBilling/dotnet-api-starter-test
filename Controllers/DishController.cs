@@ -1,4 +1,5 @@
 using AutoMapper;
+using dotnet_api_test.Exceptions.ExceptionResponses;
 using dotnet_api_test.Models.Dtos;
 using dotnet_api_test.Persistence.Repositories.Interfaces;
 using dotnet_api_test.Validation;
@@ -66,6 +67,12 @@ namespace dotnet_api_test.Controllers
             ModelValidation.ValidateUpdateDishDto(updateDishDto);
 
             Dish foundDish = _dishRepository.GetDishById(id);
+
+            if (updateDishDto.Cost > foundDish.Cost*1.2)
+            {
+                throw new BadRequestExceptionResponse("You are not allowed to raise the price more then 20%", 400);
+            }
+            
             foundDish.Name = updateDishDto.Name;
             foundDish.MadeBy = updateDishDto.MadeBy;
             foundDish.Cost = (double) updateDishDto.Cost;
