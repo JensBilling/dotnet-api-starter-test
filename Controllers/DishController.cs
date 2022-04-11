@@ -1,4 +1,5 @@
 using AutoMapper;
+using dotnet_api_test.Exceptions.ExceptionResponses;
 using dotnet_api_test.Models.Dtos;
 using dotnet_api_test.Persistence.Repositories.Interfaces;
 using Microsoft.AspNetCore.Mvc;
@@ -25,11 +26,17 @@ namespace dotnet_api_test.Controllers
         [Route("")]
         public ActionResult<DishesAndAveragePriceDto> GetDishesAndAverageDishPrice()
         {
+            if (!_dishRepository.GetAllDishes().Any())
+            {
+                throw new NotFoundRequestExceptionResponse("No dishes found in database", 404);
+            }
+
             DishesAndAveragePriceDto dishesAndAveragePriceDto = new DishesAndAveragePriceDto
             {
                 Dishes = _mapper.Map<IEnumerable<ReadDishDto>>(_dishRepository.GetAllDishes()),
                 AveragePrice = _dishRepository.GetAverageDishPrice()
             };
+
             return Ok(dishesAndAveragePriceDto);
         }
 
@@ -38,6 +45,12 @@ namespace dotnet_api_test.Controllers
         public ActionResult<ReadDishDto> GetDishById(int id)
         {
             ReadDishDto dish = _mapper.Map<ReadDishDto>(_dishRepository.GetDishById(id));
+
+            if (dish == null)
+            {
+                throw new NotFoundRequestExceptionResponse("No dish found with id: " + id, 404);
+            }
+
             return Ok(dish);
         }
 
@@ -45,22 +58,34 @@ namespace dotnet_api_test.Controllers
         [Route("")]
         public ActionResult<ReadDishDto> CreateDish([FromBody] CreateDishDto createDishDto)
         {
-            ReadDishDto dish = _mapper.Map<ReadDishDto>(_dishRepository.CreateDish(_mapper.Map<Dish>(createDishDto)));
-            return Ok(dish);
+            Dish dish = _mapper.Map<Dish>(createDishDto);
+            if (dish.Name == null || dish.MadeBy == null || dish.Cost == 0)
+            {
+                throw new BadRequestExceptionResponse("Your update must contain all fields (name, madeBy, cost)", 400);
+            }
+
+            ReadDishDto dishDto = _mapper.Map<ReadDishDto>(_dishRepository.CreateDish(dish));
+            return Ok(dishDto);
         }
 
         [HttpPut]
         [Route("{id}")]
         public ActionResult<ReadDishDto> UpdateDishById(int id, UpdateDishDto updateDishDto)
         {
-            Dish dish = _dishRepository.GetDishById(id);
-            dish.Name = updateDishDto.Name;
-            dish.MadeBy = updateDishDto.MadeBy;
-            dish.Cost = (double) updateDishDto.Cost;
-            
+            Dish dish = _mapper.Map<Dish>(updateDishDto);
+            if (dish.Name == null || dish.MadeBy == null || dish.Cost == 0)
+            {
+                throw new BadRequestExceptionResponse("Your update must contain all fields (name, madeBy, cost)", 400);
+            }
+
+            Dish foundDish = _dishRepository.GetDishById(id);
+            foundDish.Name = updateDishDto.Name;
+            foundDish.MadeBy = updateDishDto.MadeBy;
+            foundDish.Cost = (double) updateDishDto.Cost;
+
             _dishRepository.UpdateDish(dish);
-            
-            ReadDishDto dishDto = _mapper.Map<ReadDishDto>(dish);
+
+            ReadDishDto dishDto = _mapper.Map<ReadDishDto>(foundDish);
             return Ok(dishDto);
         }
 
@@ -68,6 +93,12 @@ namespace dotnet_api_test.Controllers
         [Route("{id}")]
         public ActionResult DeleteDishById(int id)
         {
+            Dish dish = _dishRepository.GetDishById(id);
+            if (dish == null)
+            {
+                throw new NotFoundRequestExceptionResponse("No dish found with id: " + id, 404);
+            }
+
             _dishRepository.DeleteDishById(id);
             return Ok("Deleted dish with id: " + id);
         }
