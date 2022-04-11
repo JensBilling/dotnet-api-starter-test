@@ -19,6 +19,10 @@ namespace dotnet_api_test.Persistence.Repositories
 
         public IEnumerable<Dish> GetAllDishes()
         {
+            if (!_context.Dishes.Any())
+            {
+                throw new NotFoundRequestExceptionResponse("No dishes found in database", 404);
+            }
             return _context.Dishes;
         }
 

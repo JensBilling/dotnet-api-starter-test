@@ -27,11 +27,6 @@ namespace dotnet_api_test.Controllers
         [Route("")]
         public ActionResult<DishesAndAveragePriceDto> GetDishesAndAverageDishPrice()
         {
-            if (!_dishRepository.GetAllDishes().Any())
-            {
-                throw new NotFoundRequestExceptionResponse("No dishes found in database", 404);
-            }
-
             DishesAndAveragePriceDto dishesAndAveragePriceDto = new DishesAndAveragePriceDto
             {
                 Dishes = _mapper.Map<IEnumerable<ReadDishDto>>(_dishRepository.GetAllDishes()),
