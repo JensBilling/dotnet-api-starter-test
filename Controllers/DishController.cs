@@ -31,7 +31,8 @@ namespace dotnet_api_test.Controllers
                 Dishes = _mapper.Map<IEnumerable<ReadDishDto>>(_dishRepository.GetAllDishes()),
                 AveragePrice = _dishRepository.GetAverageDishPrice()
             };
-
+            
+            _logger.LogInformation("Sent all dishes from database + average price as response.");
             return Ok(dishesAndAveragePriceDto);
         }
 
@@ -40,6 +41,8 @@ namespace dotnet_api_test.Controllers
         public ActionResult<ReadDishDto> GetDishById(int id)
         {
             ReadDishDto dish = _mapper.Map<ReadDishDto>(_dishRepository.GetDishById(id));
+            
+            _logger.LogInformation("Sent dish with id: " + id + " as response.");
             return Ok(dish);
         }
 
@@ -51,6 +54,8 @@ namespace dotnet_api_test.Controllers
 
             ModelValidation.ValidateCreateDishDto(createDishDto);
             ReadDishDto dishDto = _mapper.Map<ReadDishDto>(_dishRepository.CreateDish(dish));
+            
+            _logger.LogInformation("New dish created and saved to database");
             return Ok(dishDto);
         }
 
@@ -68,6 +73,7 @@ namespace dotnet_api_test.Controllers
             _dishRepository.UpdateDish(foundDish);
 
             ReadDishDto dishDto = _mapper.Map<ReadDishDto>(foundDish);
+            _logger.LogInformation("Updated dish with id: " + id + ".");
             return Ok(dishDto);
         }
 
@@ -76,6 +82,7 @@ namespace dotnet_api_test.Controllers
         public ActionResult DeleteDishById(int id)
         {
             _dishRepository.DeleteDishById(id);
+            _logger.LogInformation("Deleted dish with id: " + id + ".");
             return Ok("Deleted dish with id: " + id);
         }
     }
