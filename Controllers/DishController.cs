@@ -32,7 +32,7 @@ namespace dotnet_api_test.Controllers
                 Dishes = _mapper.Map<IEnumerable<ReadDishDto>>(_dishRepository.GetAllDishes()),
                 AveragePrice = _dishRepository.GetAverageDishPrice()
             };
-            
+
             _logger.LogInformation("Sent all dishes from database + average price as response.");
             return Ok(dishesAndAveragePriceDto);
         }
@@ -42,7 +42,7 @@ namespace dotnet_api_test.Controllers
         public ActionResult<ReadDishDto> GetDishById(int id)
         {
             ReadDishDto dish = _mapper.Map<ReadDishDto>(_dishRepository.GetDishById(id));
-            
+
             _logger.LogInformation("Sent dish with id: " + id + " as response.");
             return Ok(dish);
         }
@@ -54,8 +54,9 @@ namespace dotnet_api_test.Controllers
             Dish dish = _mapper.Map<Dish>(createDishDto);
 
             ModelValidation.ValidateCreateDishDto(createDishDto);
+            ValidateNoConflictInDatabase.ValidateCreateUniqueDishName(createDishDto.Name, _dishRepository.GetAllDishes());
             ReadDishDto dishDto = _mapper.Map<ReadDishDto>(_dishRepository.CreateDish(dish));
-            
+
             _logger.LogInformation("New dish created and saved to database");
             return Ok(dishDto);
         }
@@ -67,12 +68,9 @@ namespace dotnet_api_test.Controllers
             ModelValidation.ValidateUpdateDishDto(updateDishDto);
 
             Dish foundDish = _dishRepository.GetDishById(id);
+            ValidateNoConflictInDatabase.ValidatePriceRaiseIsNotMoreThanTwentyPercent(foundDish.Cost, (double)updateDishDto.Cost);
+            ValidateNoConflictInDatabase.ValidateUpdateUniqueDishName(id, updateDishDto.Name, _dishRepository.GetAllDishes());
 
-            if (updateDishDto.Cost > foundDish.Cost*1.2)
-            {
-                throw new BadRequestExceptionResponse("You are not allowed to raise the price more then 20%", 400);
-            }
-            
             foundDish.Name = updateDishDto.Name;
             foundDish.MadeBy = updateDishDto.MadeBy;
             foundDish.Cost = (double) updateDishDto.Cost;
